@@ -113,10 +113,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useResourcesStore } from '../stores/resources'
+import { useNotificationsStore } from '../stores/notifications'
 import StatusBadge from '../components/common/StatusBadge.vue'
 import TabsComponent from '../components/common/TabsComponent.vue'
 
 const resourcesStore = useResourcesStore()
+const notifications = useNotificationsStore()
 
 const tabs = [
   { id: 0, label: 'Equipo' },
@@ -165,9 +167,9 @@ const addTeamMember = () => {
       availability: 'available'
     }
     showAddMember.value = false
-    alert('Miembro agregado exitosamente')
+    notifications.success('Miembro agregado exitosamente')
   } else {
-    alert('Por favor completa los campos requeridos')
+    notifications.error('Por favor completa los campos requeridos')
   }
 }
 
@@ -182,16 +184,16 @@ const saveEditMember = () => {
     resourcesStore.updateTeamMember(editingMemberId.value, editMember.value)
     showEditMember.value = false
     editingMemberId.value = null
-    alert('Miembro actualizado exitosamente')
+    notifications.success('Miembro actualizado exitosamente')
   } else {
-    alert('Por favor completa los campos requeridos')
+    notifications.error('Por favor completa los campos requeridos')
   }
 }
 
 const deleteTeamMemberConfirm = (memberId) => {
   if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
     resourcesStore.deleteTeamMember(memberId)
-    alert('Miembro eliminado exitosamente')
+    notifications.success('Miembro eliminado exitosamente')
   }
 }
 </script>

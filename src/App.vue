@@ -2,6 +2,7 @@
 import Header from './components/layout/Header.vue'
 import Sidebar from './components/layout/Sidebar.vue'
 import Footer from './components/layout/Footer.vue'
+import Toast from './components/common/Toast.vue'
 </script>
 
 <template>
@@ -16,6 +17,7 @@ import Footer from './components/layout/Footer.vue'
       </div>
     </div>
     <Footer />
+    <Toast />
   </div>
 </template>
 

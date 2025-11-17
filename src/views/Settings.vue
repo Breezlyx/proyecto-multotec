@@ -73,6 +73,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useNotificationsStore } from '../stores/notifications'
+
+const notifications = useNotificationsStore()
 
 const userSettings = ref({
   username: 'admin',
@@ -91,15 +94,15 @@ const projectSettings = ref({
 })
 
 const saveUserSettings = () => {
-  alert('Configuración de usuario guardada correctamente')
+  notifications.success('Configuración de usuario guardada correctamente')
 }
 
 const saveSystemPreferences = () => {
-  alert('Preferencias del sistema guardadas correctamente')
+  notifications.success('Preferencias del sistema guardadas correctamente')
 }
 
 const saveProjectSettings = () => {
-  alert('Configuración de proyectos guardada correctamente')
+  notifications.success('Configuración de proyectos guardada correctamente')
 }
 </script>
 

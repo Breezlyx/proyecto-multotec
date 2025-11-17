@@ -168,10 +168,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useProjectsStore } from '../stores/projects'
+import { useNotificationsStore } from '../stores/notifications'
 import StatusBadge from '../components/common/StatusBadge.vue'
 import TabsComponent from '../components/common/TabsComponent.vue'
 
 const projectsStore = useProjectsStore()
+const notifications = useNotificationsStore()
 
 const tabs = [
   { id: 0, label: 'Lista de Proyectos' },
@@ -244,9 +246,9 @@ const saveNewProject = () => {
       team: []
     }
     showNewProjectForm.value = false
-    alert('Proyecto creado exitosamente')
+    notifications.success('Proyecto creado exitosamente')
   } else {
-    alert('Por favor completa los campos requeridos')
+    notifications.error('Por favor completa los campos requeridos')
   }
 }
 
@@ -261,21 +263,21 @@ const saveEditProject = () => {
     projectsStore.updateProject(editingProjectId.value, editProject.value)
     showEditProjectForm.value = false
     editingProjectId.value = null
-    alert('Proyecto actualizado exitosamente')
+    notifications.success('Proyecto actualizado exitosamente')
   } else {
-    alert('Por favor completa los campos requeridos')
+    notifications.error('Por favor completa los campos requeridos')
   }
 }
 
 const deleteProjectConfirm = (projectId) => {
   if (confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
     projectsStore.deleteProject(projectId)
-    alert('Proyecto eliminado exitosamente')
+    notifications.success('Proyecto eliminado exitosamente')
   }
 }
 
 const viewProjectDetails = (project) => {
-  alert(`Proyecto: ${project.name}\nCliente: ${project.client}\nEstado: ${getStatusLabel(project.status)}\nProgreso: ${project.progress}%`)
+  notifications.info(`Cliente: ${project.client}\nEstado: ${getStatusLabel(project.status)}\nProgreso: ${project.progress}%`, project.name)
 }
 </script>
 

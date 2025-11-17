@@ -65,9 +65,11 @@
 import { ref } from 'vue'
 import { useProjectsStore } from '../stores/projects'
 import { useResourcesStore } from '../stores/resources'
+import { useNotificationsStore } from '../stores/notifications'
 
 const projectsStore = useProjectsStore()
 const resourcesStore = useResourcesStore()
+const notifications = useNotificationsStore()
 
 const customReportType = ref('')
 const reportStartDate = ref('')
@@ -167,7 +169,7 @@ const generateResourcesReport = () => {
 
 const generateCustomReport = () => {
   if (!customReportType.value) {
-    alert('Por favor selecciona un tipo de reporte')
+    notifications.error('Por favor selecciona un tipo de reporte')
     return
   }
   
