@@ -51,9 +51,9 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════╗
-║   🚀 Multotec Backend en Vivo          ║
-║   Puerto: ${PORT}                              ║
-║   Ambiente: ${process.env.NODE_ENV}       ║
+║   🚀 Multotec Backend en Vivo         ║
+║   Puerto: ${PORT}                      ║
+║   Ambiente: ${process.env.NODE_ENV}    ║
 ║   URL: http://localhost:${PORT}        ║
 ╚════════════════════════════════════════╝
   `)

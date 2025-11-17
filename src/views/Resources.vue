@@ -27,6 +27,10 @@
                 </StatusBadge>
               </p>
             </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button class="btn btn-primary" @click="openEditMember(member)">Editar</button>
+              <button class="btn btn-danger" @click="deleteTeamMemberConfirm(member.id)">Eliminar</button>
+            </div>
           </div>
           
           <div class="form-group" style="margin-top: 20px;">
@@ -54,6 +58,40 @@
             <div style="display: flex; gap: 10px;">
               <button class="btn btn-success" @click="addTeamMember">Guardar</button>
               <button class="btn" style="background: #ccc; color: #333;" @click="showAddMember = false">Cancelar</button>
+            </div>
+          </div>
+
+          <!-- Modal: Editar Miembro -->
+          <div v-if="showEditMember" class="form-overlay">
+            <div class="form-container">
+              <h3>Editar Miembro del Equipo</h3>
+              <div class="form-group">
+                <label>Nombre</label>
+                <input v-model="editMember.name" type="text" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Rol</label>
+                <input v-model="editMember.role" type="text" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input v-model="editMember.email" type="email" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input v-model="editMember.phone" type="tel" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Disponibilidad</label>
+                <select v-model="editMember.availability" class="form-control">
+                  <option value="available">Disponible</option>
+                  <option value="assigned">Asignado</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" @click="saveEditMember">Guardar Cambios</button>
+                <button class="btn" style="background: #ccc; color: #333;" @click="showEditMember = false">Cancelar</button>
+              </div>
             </div>
           </div>
         </div>
@@ -88,7 +126,16 @@ const tabs = [
 
 const searchTeam = ref('')
 const showAddMember = ref(false)
+const showEditMember = ref(false)
+const editingMemberId = ref(null)
 const newMember = ref({
+  name: '',
+  role: '',
+  email: '',
+  phone: '',
+  availability: 'available'
+})
+const editMember = ref({
   name: '',
   role: '',
   email: '',
@@ -121,6 +168,30 @@ const addTeamMember = () => {
     alert('Miembro agregado exitosamente')
   } else {
     alert('Por favor completa los campos requeridos')
+  }
+}
+
+const openEditMember = (member) => {
+  editingMemberId.value = member.id
+  editMember.value = { ...member }
+  showEditMember.value = true
+}
+
+const saveEditMember = () => {
+  if (editMember.value.name && editMember.value.role) {
+    resourcesStore.updateTeamMember(editingMemberId.value, editMember.value)
+    showEditMember.value = false
+    editingMemberId.value = null
+    alert('Miembro actualizado exitosamente')
+  } else {
+    alert('Por favor completa los campos requeridos')
+  }
+}
+
+const deleteTeamMemberConfirm = (memberId) => {
+  if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
+    resourcesStore.deleteTeamMember(memberId)
+    alert('Miembro eliminado exitosamente')
   }
 }
 </script>
@@ -222,6 +293,28 @@ const addTeamMember = () => {
 .resource-info p {
   color: #666;
   margin-bottom: 5px;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .btn {

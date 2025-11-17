@@ -34,8 +34,9 @@
                 <td>{{ formatDate(project.endDate) }}</td>
                 <td><StatusBadge :status="project.status">{{ getStatusLabel(project.status) }}</StatusBadge></td>
                 <td>
-                  <button class="btn btn-primary">Editar</button>
-                  <button class="btn btn-warning">Ver</button>
+                  <button class="btn btn-primary" @click="openEditProject(project)">Editar</button>
+                  <button class="btn btn-warning" @click="viewProjectDetails(project)">Ver</button>
+                  <button class="btn btn-danger" @click="deleteProjectConfirm(project.id)">Eliminar</button>
                 </td>
               </tr>
             </tbody>
@@ -85,6 +86,64 @@
           <p v-else style="color: #666;">Haz clic en "Nuevo Proyecto" para crear uno.</p>
         </div>
 
+        <!-- Modal: Editar Proyecto -->
+        <div v-if="showEditProjectForm" class="form-overlay">
+          <div class="form-container" style="max-width: 600px;">
+            <h3>Editar Proyecto</h3>
+            <div class="form-group">
+              <label>Nombre del Proyecto</label>
+              <input v-model="editProject.name" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Cliente</label>
+              <input v-model="editProject.client" type="text" class="form-control">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha Inicio</label>
+                <input v-model="editProject.startDate" type="date" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Fecha Fin</label>
+                <input v-model="editProject.endDate" type="date" class="form-control">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Presupuesto</label>
+                <input v-model.number="editProject.budget" type="number" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Progreso (%)</label>
+                <input v-model.number="editProject.progress" type="number" min="0" max="100" class="form-control">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Estado</label>
+                <select v-model="editProject.status" class="form-control">
+                  <option value="planned">Planificado</option>
+                  <option value="inprogress">En Progreso</option>
+                  <option value="completed">Completado</option>
+                  <option value="delayed">Retrasado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Gasto Actual</label>
+                <input v-model.number="editProject.spent" type="number" class="form-control">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Descripción</label>
+              <textarea v-model="editProject.description" class="form-control" rows="4"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-success" @click="saveEditProject">Guardar Cambios</button>
+              <button class="btn" style="background: #ccc; color: #333;" @click="showEditProjectForm = false">Cancelar</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Tab: Gantt Chart -->
         <div v-else-if="tab === 2">
           <div class="gantt-container">
@@ -122,6 +181,8 @@ const tabs = [
 
 const searchQuery = ref('')
 const showNewProjectForm = ref(false)
+const showEditProjectForm = ref(false)
+const editingProjectId = ref(null)
 const newProject = ref({
   name: '',
   client: '',
@@ -133,6 +194,17 @@ const newProject = ref({
   progress: 0,
   spent: 0,
   team: []
+})
+const editProject = ref({
+  name: '',
+  client: '',
+  startDate: '',
+  endDate: '',
+  budget: 0,
+  description: '',
+  status: 'planned',
+  progress: 0,
+  spent: 0
 })
 
 const filteredProjects = computed(() => {
@@ -176,6 +248,34 @@ const saveNewProject = () => {
   } else {
     alert('Por favor completa los campos requeridos')
   }
+}
+
+const openEditProject = (project) => {
+  editingProjectId.value = project.id
+  editProject.value = { ...project }
+  showEditProjectForm.value = true
+}
+
+const saveEditProject = () => {
+  if (editProject.value.name && editProject.value.client) {
+    projectsStore.updateProject(editingProjectId.value, editProject.value)
+    showEditProjectForm.value = false
+    editingProjectId.value = null
+    alert('Proyecto actualizado exitosamente')
+  } else {
+    alert('Por favor completa los campos requeridos')
+  }
+}
+
+const deleteProjectConfirm = (projectId) => {
+  if (confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
+    projectsStore.deleteProject(projectId)
+    alert('Proyecto eliminado exitosamente')
+  }
+}
+
+const viewProjectDetails = (project) => {
+  alert(`Proyecto: ${project.name}\nCliente: ${project.client}\nEstado: ${getStatusLabel(project.status)}\nProgreso: ${project.progress}%`)
 }
 </script>
 
@@ -280,6 +380,29 @@ const saveNewProject = () => {
 
 .btn-warning:hover {
   background: #e67e22;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+  margin-left: 5px;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 table {
