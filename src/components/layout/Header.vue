@@ -3,7 +3,9 @@
     <div class="container">
       <div class="header-content">
         <div class="logo">
-          <div class="logo-img-placeholder">M</div>
+          <div class="logo-img-placeholder">
+            <img src="../../assets/logo_multotec.jpeg" alt="Logo Multotec" class="logo-img">
+          </div>
           <div class="logo-text">
             <h1>Multotec Project Management</h1>
             <p>Sistema de Gestión de Proyectos basado en PMBOK 6ª edición</p>
@@ -98,8 +100,8 @@ header {
 }
 
 .logo-img-placeholder {
-  height: 50px;
-  width: 50px;
+  height: 100px;
+  width: 100px;
   background: rgba(255,255,255,0.2);
   border-radius: 4px;
   display: flex;
@@ -108,6 +110,13 @@ header {
   font-weight: bold;
   font-size: 1.5rem;
   margin-right: 10px;
+  overflow: hidden;
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .logo-text {
