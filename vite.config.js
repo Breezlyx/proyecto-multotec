@@ -11,14 +11,15 @@ export default defineConfig({
     cors: true,
     // Proxy API calls to the backend to avoid CORS / mixed-content issues
     // when the frontend is accessed over HTTPS (eg. via ngrok).
-    proxy: {
+    // NOTA: Solo activar si VITE_API_BASE_URL está definido
+    proxy: process.env.VITE_API_BASE_URL ? {
       '/api': {
-        target: 'http://localhost:3000',
+        target: process.env.VITE_API_BASE_URL.replace('/api', ''),
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api')
       }
-    },
+    } : {},
     allowedHosts: [
       'localhost',
       '127.0.0.1',

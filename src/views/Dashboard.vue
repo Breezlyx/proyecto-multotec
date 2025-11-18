@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useProjectsStore } from '../stores/projects'
 import { useResourcesStore } from '../stores/resources'
 import StatusBadge from '../components/common/StatusBadge.vue'
@@ -78,21 +78,22 @@ const activeProjects = computed(() => projectsStore.activeProjects)
 const pendingTasks = computed(() => {
   let count = 0
   projectsStore.projects.forEach(project => {
-    count += project.tasks.filter(t => t.status !== 'completed').length
+    const tasks = project.tasks || []
+    count += tasks.filter(t => t && t.status !== 'completed').length
   })
   return count
 })
 
 const budgetPercentage = computed(() => {
-  const totalBudget = projectsStore.projects.reduce((sum, p) => sum + p.budget, 0)
-  const totalSpent = projectsStore.projects.reduce((sum, p) => sum + p.spent, 0)
+  const totalBudget = projectsStore.projects.reduce((sum, p) => sum + (Number(p?.budget) || 0), 0)
+  const totalSpent = projectsStore.projects.reduce((sum, p) => sum + (Number(p?.spent) || 0), 0)
   return totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 })
 
 const totalRisks = computed(() => {
   let count = 0
   projectsStore.projects.forEach(project => {
-    count += project.risks.length
+    count += (project.risks || []).length
   })
   return count
 })
@@ -100,17 +101,22 @@ const totalRisks = computed(() => {
 const upcomingTasks = computed(() => {
   const tasks = []
   projectsStore.projects.forEach(project => {
-    project.tasks.forEach(task => {
+    const projectTasks = project.tasks || []
+    projectTasks.forEach(task => {
+      if (!task) return
       tasks.push({
-        projectName: project.name,
-        taskName: task.name,
-        dueDate: task.dueDate,
-        status: task.status,
-        taskId: `${project.id}-${task.id}`
+        projectName: project.name || '—',
+        taskName: task.name || task.title || '—',
+        dueDate: task.dueDate || task.due || null,
+        status: task.status || 'planned',
+        taskId: `${project.id}-${task.id || Math.random().toString(36).slice(2,8)}`
       })
     })
   })
-  return tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).slice(0, 5)
+  return tasks
+    .filter(t => t.dueDate)
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .slice(0, 5)
 })
 
 const formatDate = (date) => {
@@ -130,6 +136,12 @@ const getStatusLabel = (status) => {
   }
   return labels[status] || status
 }
+
+// Cargar datos cuando el componente está montado
+onMounted(() => {
+  projectsStore.fetchProjects()
+  resourcesStore.fetchTeamMembers()
+})
 </script>
 
 <style scoped>

@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useResourcesStore } from '../stores/resources'
 import { useNotificationsStore } from '../stores/notifications'
 import { useModalsStore } from '../stores/modals'
@@ -204,6 +204,11 @@ const deleteTeamMemberConfirm = (memberId) => {
     }
   })
 }
+
+// Cargar miembros del equipo cuando el componente está montado
+onMounted(() => {
+  resourcesStore.fetchTeamMembers()
+})
 </script>
 
 <style scoped>

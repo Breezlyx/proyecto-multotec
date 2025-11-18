@@ -42,6 +42,24 @@
             </li>
             <li>
               <RouterLink 
+                to="/tasks" 
+                class="nav-link"
+                :class="{ active: route.path === '/tasks' }"
+              >
+                Tareas
+              </RouterLink>
+            </li>
+            <li>
+              <RouterLink 
+                to="/risks" 
+                class="nav-link"
+                :class="{ active: route.path === '/risks' }"
+              >
+                Riesgos
+              </RouterLink>
+            </li>
+            <li>
+              <RouterLink 
                 to="/reports" 
                 class="nav-link"
                 :class="{ active: route.path === '/reports' }"

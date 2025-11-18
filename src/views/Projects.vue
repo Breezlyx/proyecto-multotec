@@ -166,7 +166,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useProjectsStore } from '../stores/projects'
 import { useNotificationsStore } from '../stores/notifications'
 import { useModalsStore } from '../stores/modals'
@@ -287,6 +287,11 @@ const deleteProjectConfirm = (projectId) => {
 const viewProjectDetails = (project) => {
   notifications.info(`Cliente: ${project.client}\nEstado: ${getStatusLabel(project.status)}\nProgreso: ${project.progress}%`, project.name)
 }
+
+// Cargar proyectos cuando el componente está montado
+onMounted(() => {
+  projectsStore.fetchProjects()
+})
 </script>
 
 <style scoped>

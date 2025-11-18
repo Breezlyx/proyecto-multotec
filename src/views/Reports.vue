@@ -118,9 +118,10 @@ const generateRisksReport = () => {
   
   let totalRisks = 0
   projectsStore.projects.forEach(project => {
-    if (project.risks.length > 0) {
+    const risks = project.risks || []
+    if (risks.length > 0) {
       content += `Proyecto: ${project.name}\n`
-      project.risks.forEach(risk => {
+      risks.forEach(risk => {
         content += `  - ${risk.title} (Prob: ${risk.probability}, Impacto: ${risk.impact})\n`
         totalRisks++
       })
@@ -134,8 +135,8 @@ const generateRisksReport = () => {
 const generateFinancialReport = () => {
   let content = 'REPORTE FINANCIERO\n\n'
   
-  const totalBudget = projectsStore.projects.reduce((sum, p) => sum + p.budget, 0)
-  const totalSpent = projectsStore.projects.reduce((sum, p) => sum + p.spent, 0)
+  const totalBudget = projectsStore.projects.reduce((sum, p) => sum + (Number(p?.budget) || 0), 0)
+  const totalSpent = projectsStore.projects.reduce((sum, p) => sum + (Number(p?.spent) || 0), 0)
   const percentage = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
   
   content += `Presupuesto Total: $${totalBudget.toLocaleString()}\n`
@@ -145,8 +146,10 @@ const generateFinancialReport = () => {
   
   content += 'Por Proyecto:\n'
   projectsStore.projects.forEach(project => {
-    const used = Math.round((project.spent / project.budget) * 100)
-    content += `\n- ${project.name}\n  Presupuesto: $${project.budget}\n  Gastado: $${project.spent} (${used}%)\n`
+    const budget = Number(project.budget) || 0
+    const spent = Number(project.spent) || 0
+    const used = budget > 0 ? Math.round((spent / budget) * 100) : 0
+    content += `\n- ${project.name}\n  Presupuesto: $${budget}\n  Gastado: $${spent} (${used}%)\n`
   })
   
   return content
