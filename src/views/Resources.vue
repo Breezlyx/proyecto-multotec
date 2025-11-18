@@ -114,11 +114,13 @@
 import { ref, computed } from 'vue'
 import { useResourcesStore } from '../stores/resources'
 import { useNotificationsStore } from '../stores/notifications'
+import { useModalsStore } from '../stores/modals'
 import StatusBadge from '../components/common/StatusBadge.vue'
 import TabsComponent from '../components/common/TabsComponent.vue'
 
 const resourcesStore = useResourcesStore()
 const notifications = useNotificationsStore()
+const modals = useModalsStore()
 
 const tabs = [
   { id: 0, label: 'Equipo' },
@@ -191,10 +193,16 @@ const saveEditMember = () => {
 }
 
 const deleteTeamMemberConfirm = (memberId) => {
-  if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-    resourcesStore.deleteTeamMember(memberId)
-    notifications.success('Miembro eliminado exitosamente')
-  }
+  modals.confirm({
+    title: 'Eliminar Miembro',
+    message: '¿Estás seguro de que deseas eliminar este miembro del equipo? Esta acción no se puede deshacer.',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      resourcesStore.deleteTeamMember(memberId)
+      notifications.success('Miembro eliminado exitosamente')
+    }
+  })
 }
 </script>
 

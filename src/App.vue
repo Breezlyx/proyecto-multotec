@@ -3,6 +3,7 @@ import Header from './components/layout/Header.vue'
 import Sidebar from './components/layout/Sidebar.vue'
 import Footer from './components/layout/Footer.vue'
 import Toast from './components/common/Toast.vue'
+import ConfirmDialog from './components/common/ConfirmDialog.vue'
 </script>
 
 <template>
@@ -18,6 +19,7 @@ import Toast from './components/common/Toast.vue'
     </div>
     <Footer />
     <Toast />
+    <ConfirmDialog />
   </div>
 </template>
 

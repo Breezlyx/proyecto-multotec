@@ -169,11 +169,13 @@
 import { ref, computed } from 'vue'
 import { useProjectsStore } from '../stores/projects'
 import { useNotificationsStore } from '../stores/notifications'
+import { useModalsStore } from '../stores/modals'
 import StatusBadge from '../components/common/StatusBadge.vue'
 import TabsComponent from '../components/common/TabsComponent.vue'
 
 const projectsStore = useProjectsStore()
 const notifications = useNotificationsStore()
+const modals = useModalsStore()
 
 const tabs = [
   { id: 0, label: 'Lista de Proyectos' },
@@ -270,10 +272,16 @@ const saveEditProject = () => {
 }
 
 const deleteProjectConfirm = (projectId) => {
-  if (confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
-    projectsStore.deleteProject(projectId)
-    notifications.success('Proyecto eliminado exitosamente')
-  }
+  modals.confirm({
+    title: 'Eliminar Proyecto',
+    message: '¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.',
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      projectsStore.deleteProject(projectId)
+      notifications.success('Proyecto eliminado exitosamente')
+    }
+  })
 }
 
 const viewProjectDetails = (project) => {
